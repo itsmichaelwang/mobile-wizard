@@ -18,13 +18,12 @@ def get_access_token():
 	
 	return access_token
 
-def upload_image(filename):
+def upload_image(img):
 	url = 'https://api.imgur.com/3/image'
 	#encode image for POST request
-	with open(filename, 'rb') as myfile:
-		data = b64encode(myfile.read())
+	img_data = b64encode(img.getvalue())
 	payload = {
-		'image':data,
+		'image':img_data,
 		'type':'base64',
 		'title':"Test Image",
 		'description':"Test of the ASCII-Bot"
@@ -46,5 +45,3 @@ def upload_image(filename):
 		r = requests.post(url, data=payload, headers=header)
 		print r
 		status_code = r.status_code
-
-upload_image('data.png')
