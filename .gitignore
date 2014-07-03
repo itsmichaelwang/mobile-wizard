@@ -1,2 +1,3 @@
 *.pyc
 credentials.json
+credentials_backup.json
