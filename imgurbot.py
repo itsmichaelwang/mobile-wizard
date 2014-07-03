@@ -2,11 +2,6 @@ import requests
 import json
 from base64 import b64encode
 
-from credentials import imgur_access_token
-from credentials import imgur_refresh_token
-from credentials import imgur_client_ID
-from credentials import imgur_client_secret
-
 def get_access_token():
 	payload = {'refresh_token': imgur_refresh_token,
 						 'client_id': imgur_client_ID,
@@ -15,10 +10,22 @@ def get_access_token():
 	r = requests.post('https://api.imgur.com/oauth2/token', data=payload)
 	content = json.loads(r.content)
 	access_token = content['access_token']
-	
 	return access_token
 
 def upload_image(img):
+	# load oauth credentials from 'credentials.json'
+	credentials_json = open('credentials.json', 'r+')
+	credentials = json.load(credentials_json)
+	print credentials
+	global imgur_access_token
+	global imgur_refresh_token
+	global imgur_client_ID
+	global imgur_client_secret
+	imgur_access_token = credentials['imgur_access_token']
+	imgur_refresh_token = credentials['imgur_refresh_token']
+	imgur_client_ID = credentials['imgur_client_ID']
+	imgur_client_secret = credentials['imgur_client_secret']
+
 	url = 'https://api.imgur.com/3/image'
 	#encode image for POST request
 	img_data = b64encode(img.getvalue())
@@ -36,12 +43,17 @@ def upload_image(img):
 	while (status_code != 200):
 		# invalid access token - generate a new one and print it (storing to file will come later)
 		if (status_code == 403):
-			new_access_token = get_access_token()
-			print new_access_token
+			imgur_access_token = get_access_token()
+			print imgur_access_token
+			credentials['imgur_access_token'] = imgur_access_token
+			credentials_json.seek(0)
+			json.dump(credentials, credentials_json)
 			header = {
-				'Authorization': 'Bearer ' + new_access_token
+				'Authorization': 'Bearer ' + imgur_access_token
 			}
 
 		r = requests.post(url, data=payload, headers=header)
-		print r
 		status_code = r.status_code
+		print r
+
+	credentials_json.close()
