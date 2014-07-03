@@ -1,6 +1,5 @@
 import requests
 import json
-from pprint import pprint
 
 from credentials import imgur_refresh_token
 from credentials import imgur_client_ID
