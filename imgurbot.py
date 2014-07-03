@@ -1,16 +1,28 @@
 import requests
+import json
 from base64 import b64encode
-from credentials import imgur_access_token
 
-# required for get_access_token
-from tokens import *
+from credentials import imgur_access_token
+from credentials import imgur_refresh_token
+from credentials import imgur_client_ID
+from credentials import imgur_client_secret
+
+def get_access_token():
+	payload = {'refresh_token': imgur_refresh_token,
+						 'client_id': imgur_client_ID,
+						 'client_secret': imgur_client_secret,
+						 'grant_type':'refresh_token'}
+	r = requests.post('https://api.imgur.com/oauth2/token', data=payload)
+	content = json.loads(r.content)
+	access_token = content['access_token']
+	
+	return access_token
 
 def upload_image(filename):
 	url = 'https://api.imgur.com/3/image'
 	#encode image for POST request
 	with open(filename, 'rb') as myfile:
 		data = b64encode(myfile.read())
-
 	payload = {
 		'image':data,
 		'type':'base64',
