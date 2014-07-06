@@ -23,7 +23,8 @@ r = praw.Reddit(user_agent=user_agent)
 user = r.login(username=reddit_user_name, password=reddit_pass_word)
 
 # dictionary of track of submissions => comments that have been modified
-already_done = {}
+completed_json = open('completed_json', 'r+')
+completed = 
 
 while True:
 	print("Fetching comments...")
@@ -31,6 +32,7 @@ while True:
 	comments = r.get_comments('all', limit=250)
 	for comment in comments:
 		print(comment)
+		# keyword detection
 		if "rip mobile users" in comment.body:
 			if comment.is_root:
 				parent = comment.submission
@@ -38,13 +40,13 @@ while True:
 			else:
 				parent = r.get_info(thing_id=comment.parent_id)
 				parent_text = parent.body
-			# checks to make sure the string isn't empty before converting it
+			# only convert non-empty strings greater than 5x15
 			if parent_text:
 				if strtoimg.is_valid(parent_text, 5, 15):
 					image = strtoimg.str_to_img(parent_text)
-					link = imgur.upload_image(image, parent.permalink)
+					uploaded_image_url = imgur.upload_image(image, comment.permalink)
 					# make a post
-					comment.reply(link)
+					comment.reply(uploaded_image_url)
 
 	# Reddit recent comments page is cached every 30 seconds, so wait 30 (+5 for error) seconds until fetching comments again
 	elapsed_time = time.time() - start
