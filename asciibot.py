@@ -46,7 +46,6 @@ while True:
 					continue
 				if comment_id in completed[submission_id]:
 					continue
-			print("test")
 			if comment.is_root:
 				parent = comment.submission
 				parent_text = parent.selftext
@@ -60,13 +59,11 @@ while True:
 				# make a post
 				comment.reply(uploaded_image_url)
 				# update completed_json
-				print(completed)
 				completed[submission_id] = completed.get(submission_id, [])
 				completed[submission_id].append(comment_id)
-				print(completed)
-	completed_json.seek(0)
-	json.dump(completed, completed_json)
-
+				completed_json.seek(0)
+				json.dump(completed, completed_json)
+	
 	# Reddit recent comments page is cached every 30 seconds, so wait 30 (+5 for error) seconds until fetching comments again
 	elapsed_time = time.time() - start
 	MIN_WAIT_TIME = 35
