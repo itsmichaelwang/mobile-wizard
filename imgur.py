@@ -41,6 +41,7 @@ def upload_image(img, title):
 	while (status_code != 200):
 		# upload image and parse response
 		r = requests.post(url, data=payload, headers=header)
+		print(r)
 		status_code = r.status_code
 		# success, return link
 		if (status_code == 200):
