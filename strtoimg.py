@@ -1,26 +1,35 @@
 from PIL import Image, ImageDraw, ImageFont
 from cStringIO import StringIO
 
-# returns True if 'str' has a segment of consecutive characters of length 'size'
-def has_consecutive_chars(str, size):
-	char_counts = []
-	for char in str:
-		if len(char_counts) != 0:
-			if char_counts[-1][0] == char:
-				char_counts[-1][1] += 1
-				# check for consecutive condition
-				if (char_counts[-1][1] >= size):
-					return True
-			else:
-				char_counts.append([char, 1])
-		else:
-			char_counts.append([char, 1])
-	return False
+# returns True if 'str' has a segment of consecutive characters of length 'size', not currently used
+# def has_consecutive_chars(teststr, size):
+# 	char_counts = []
+# 	teststr = teststr.splitlines()
+# 	for line in teststr:
+# 		line = line.strip()
+# 		line = line.replace('.','')
+# 	teststr = "".join(teststr)
+
+# 	for char in teststr:
+# 		if len(char_counts) != 0:
+# 			if char_counts[-1][0] == char:
+# 				char_counts[-1][1] += 1
+# 				# check for consecutive condition
+# 				if (char_counts[-1][1] >= size):
+# 					print char_counts
+# 					return True
+# 			else:
+# 				char_counts.append([char, 1])
+# 		else:
+# 			char_counts.append([char, 1])
+# 	return False
 
 # determines whether or not a string is ascii art, using a "very sophisticated" algorithm
-def is_ascii_art(str):
-	num_lines = len(str.splitlines())
-	return num_lines >= 5 and has_consecutive_chars(str, 5)
+def is_valid(str, max_height, max_width):
+	lines = str.splitlines()
+	height = len(lines)
+	width = max(len(s) for s in lines)
+	return height >= max_height and width >= max_width
 
 # str is the ASCII art string to be converted
 def str_to_img(str):

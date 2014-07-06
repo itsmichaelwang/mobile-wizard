@@ -12,7 +12,7 @@ def get_access_token():
 	access_token = content['access_token']
 	return access_token
 
-def upload_image(img):
+def upload_image(img, title):
 	# load oauth credentials from 'credentials.json'
 	credentials_json = open('credentials.json', 'r+')
 	credentials = json.load(credentials_json)
@@ -31,8 +31,7 @@ def upload_image(img):
 	payload = {
 		'image':img_data,
 		'type':'base64',
-		'title':"Test Image",
-		'description':"Test of the ASCII-Bot"
+		'title':title,
 	}
 	header = {
 		'Authorization': 'Bearer ' + imgur_access_token
@@ -40,6 +39,14 @@ def upload_image(img):
 
 	status_code = 0
 	while (status_code != 200):
+		# upload image and parse response
+		r = requests.post(url, data=payload, headers=header)
+		status_code = r.status_code
+		# success, return link
+		if (status_code == 200):
+			credentials_json.close()
+			data = json.loads(r.text)['data']
+			return data['link']
 		# invalid access token - generate a new one and print it (storing to file will come later)
 		if (status_code == 403):
 			imgur_access_token = get_access_token()
@@ -50,9 +57,3 @@ def upload_image(img):
 			header = {
 				'Authorization': 'Bearer ' + imgur_access_token
 			}
-
-		r = requests.post(url, data=payload, headers=header)
-		status_code = r.status_code
-		print r
-
-	credentials_json.close()

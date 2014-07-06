@@ -7,10 +7,7 @@ import time
 import strtoimg
 import imgur
 
-# login to Reddit
-user_agent = ("ascii-wizard"
-							"ASCII art to image conversion for mobile users bot"
-							"Version 1.0b by /u/Zapurdead")
+# use the credentials file to load username/password
 with open('credentials.json', 'r') as credentials_json:
 	credentials = json.load(credentials_json)
 	global reddit_user_name
@@ -18,28 +15,38 @@ with open('credentials.json', 'r') as credentials_json:
 	reddit_user_name = credentials['reddit_user_name']
 	reddit_pass_word = credentials['reddit_pass_word']
 
+# login to Reddit
+user_agent = ("ascii-wizard"
+							"ASCII art to image conversion for mobile users bot"
+							"Version 1.0b by /u/Zapurdead")
 r = praw.Reddit(user_agent=user_agent)
 user = r.login(username=reddit_user_name, password=reddit_pass_word)
 
-# keep track of what has been analyzed
+# dictionary of track of submissions => comments that have been modified
 already_done = {}
 
-# analyze comments as they are made
 while True:
+	print("Fetching comments...")
 	start = time.time()
-	print("Retrieving the 150 most recent comments...")
-	comments = r.get_comments('all', limit=150)
-	
+	comments = r.get_comments('all', limit=250)
 	for comment in comments:
 		print(comment)
-		if strtoimg.is_ascii_art(comment.body):
-			print("^ASCII ART")
-			image = strtoimg.str_to_img(comment.body)
-			imgur.upload_image(image)
-		else:
-			print("^NOT ASCII ART")
+		if "rip mobile users" in comment.body:
+			if comment.is_root:
+				parent = comment.submission
+				parent_text = parent.selftext
+			else:
+				parent = r.get_info(thing_id=comment.parent_id)
+				parent_text = parent.body
+			# checks to make sure the string isn't empty before converting it
+			if parent_text:
+				if strtoimg.is_valid(parent_text, 5, 15):
+					image = strtoimg.str_to_img(parent_text)
+					link = imgur.upload_image(image, parent.permalink)
+					# make a post
+					comment.reply(link)
 
-	# Reddit comment stream is cached every 30 seconds, so wait 30 (+5 for imperfections) seconds until fetching comments again
+	# Reddit recent comments page is cached every 30 seconds, so wait 30 (+5 for error) seconds until fetching comments again
 	elapsed_time = time.time() - start
 	MIN_WAIT_TIME = 35
 	while (elapsed_time < MIN_WAIT_TIME):
