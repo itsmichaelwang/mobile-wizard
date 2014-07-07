@@ -17,24 +17,26 @@ def automatic_reddit_login(credentials_file=None):
 	Returns:
 		The praw.Reddit class, which allows access to Reddit's API
 	"""
-
-	# use the credentials file to load username/password
-	with open(credentials_file, 'r') as credentials_json:
-		credentials = json.load(credentials_json)
-		r_username = credentials['reddit_username']
-		r_password = credentials['reddit_password']
-
-	# login to Reddit
+	# submit user agent
 	user_agent = ("ascii-wizard: Reddit post2image conversion bot for mobile users"
 								"Version 1.0b by /u/Zapurdead")
 	r = praw.Reddit(user_agent=user_agent)
-	user = r.login(username=r_username, password=r_password)
+
+	# if credentials are provided, use them, otherwise prompt
+	if credentials_file != None:
+		with open(credentials_file, 'r') as credentials_json:
+			credentials = json.load(credentials_json)
+			r_username = credentials['reddit_username']
+			r_password = credentials['reddit_password']
+		user = r.login(username=r_username, password=r_password)
+	else:
+		user = r.login()
 
 	return r
 
 # def comments_by_keyword():
 
-r = automatic_reddit_login('credentials.json')
+r = automatic_reddit_login()
 
 # dictionary to track and limit the # of conversions in a submissiong
 # submission => converted comment
