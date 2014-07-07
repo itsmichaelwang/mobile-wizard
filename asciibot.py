@@ -7,20 +7,34 @@ import time
 import strtoimg
 import imgur
 
-# use the credentials file to load username/password
-with open('credentials.json', 'r') as credentials_json:
-	credentials = json.load(credentials_json)
-	global reddit_user_name
-	global reddit_pass_word
-	reddit_user_name = credentials['reddit_user_name']
-	reddit_pass_word = credentials['reddit_pass_word']
+# if you have a json file with the keys 'reddit_user_name' and 'reddit_pass_word'
+def automatic_reddit_login(credentials_file=None):
+	"""Logs users in automatically if credentials are provided, otherwise prompts user for input.
 
-# login to Reddit
-user_agent = ("ascii-wizard"
-							"ASCII art to image conversion for mobile users bot"
-							"Version 1.0b by /u/Zapurdead")
-r = praw.Reddit(user_agent=user_agent)
-user = r.login(username=reddit_user_name, password=reddit_pass_word)
+	Args:
+		credentials_file: A string with the name of a json file with the key/value pairs 'reddit_user_name' and 'reddit_pass_word'. If not provided, will default to None, in which case the function will prompt the user for username/password.
+
+	Returns:
+		The praw.Reddit class, which allows access to Reddit's API
+	"""
+
+	# use the credentials file to load username/password
+	with open(credentials_file, 'r') as credentials_json:
+		credentials = json.load(credentials_json)
+		r_username = credentials['reddit_username']
+		r_password = credentials['reddit_password']
+
+	# login to Reddit
+	user_agent = ("ascii-wizard: Reddit post2image conversion bot for mobile users"
+								"Version 1.0b by /u/Zapurdead")
+	r = praw.Reddit(user_agent=user_agent)
+	user = r.login(username=r_username, password=r_password)
+
+	return r
+
+# def comments_by_keyword():
+
+r = automatic_reddit_login('credentials.json')
 
 # dictionary to track and limit the # of conversions in a submissiong
 # submission => converted comment
