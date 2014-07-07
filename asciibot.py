@@ -95,12 +95,41 @@ def is_valid(comment, comment_history_file):
 	comment_history_json.close()
 	return True
 
-# for a given comment, reply to that comment with a picture of the comment's parent
-# def reply_with_image(comment):
+def reply_with_image(r, comment):
+	"""For the given comment, reply to that comment with a picture of the comment's parent. The function does not return anything.
+
+	Args:
+		r: The praw.Reddit class, which is required to access the Reddit API and can be gotten from automatic_reddit_login() or praw's login() function
+		comment: The comment to reply to.
+	"""
+	# if 'comment' is a root comment, its parent is the submission itself
+	# if 'comment' is not a root comment, its parent is the comment above it
+	if comment.is_root:
+		parent = comment.submission
+		parent_text = parent.selftext
+	else:
+		parent = r.get_info(thing_id=comment.parent_id)
+		parent_text = parent.body
+	# convert/upload the parent post to imgur
+	image = strtoimg.str_to_img(parent_text)
+	uploaded_image_url = imgur.upload_image(image, comment.permalink)
+	# reply to 'comment'
+	comment.reply(uploaded_image_url)
+
+def delay(start, delay_time):
+	"""From a given point in time, delay execution until a certain amount of time has passed.
+
+	Args:
+		start: The point in time to start counting from, in seconds. The easiest way to get this is to create an instance of time.time() somewhere in your code, and pass it in.
+		delay_time: The time, in seconds after start, that the function should delay execution until
+	"""
+	elapsed_time = time.time() - start
+	while (elapsed_time < delay_time):
+		print(delay_time - elapsed_time, end='\r')
+		elapsed_time = time.time() - start
 
 # start shit
 r = automatic_reddit_login('credentials.json')
-
 while True:
 	# intentional time delay (see below)
 	start = time.time()
@@ -108,22 +137,6 @@ while True:
 	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='test'):
 		print(comment.body)
 		if is_valid(comment, 'completed.json'):
-			if comment.is_root:
-				parent = comment.submission
-				parent_text = parent.selftext
-			else:
-				parent = r.get_info(thing_id=comment.parent_id)
-				parent_text = parent.body
-			# only convert non-empty strings greater than 5x15
-			image = strtoimg.str_to_img(parent_text)
-			uploaded_image_url = imgur.upload_image(image, comment.permalink)
-			# make a post
-			comment.reply(uploaded_image_url)
-			# update completed_json
-	
+			reply_with_image(r, comment)
 	# Reddit recent comments page is cached every 30 seconds, so wait 30 (+5 for error) seconds until fetching comments again
-	elapsed_time = time.time() - start
-	MIN_WAIT_TIME = 35
-	while (elapsed_time < MIN_WAIT_TIME):
-		print(MIN_WAIT_TIME - elapsed_time, end='\r')
-		elapsed_time = time.time() - start
+	delay(start, 35)

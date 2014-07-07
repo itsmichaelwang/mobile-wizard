@@ -1,29 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 from cStringIO import StringIO
 
-# returns True if 'str' has a segment of consecutive characters of length 'size', not currently used
-# def has_consecutive_chars(teststr, size):
-# 	char_counts = []
-# 	teststr = teststr.splitlines()
-# 	for line in teststr:
-# 		line = line.strip()
-# 		line = line.replace('.','')
-# 	teststr = "".join(teststr)
-
-# 	for char in teststr:
-# 		if len(char_counts) != 0:
-# 			if char_counts[-1][0] == char:
-# 				char_counts[-1][1] += 1
-# 				# check for consecutive condition
-# 				if (char_counts[-1][1] >= size):
-# 					print char_counts
-# 					return True
-# 			else:
-# 				char_counts.append([char, 1])
-# 		else:
-# 			char_counts.append([char, 1])
-# 	return False
-
 # str is the ASCII art string to be converted
 def str_to_img(str):
 	# use 12pt Courier New for ASCII art
