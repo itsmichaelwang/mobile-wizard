@@ -24,13 +24,6 @@ from cStringIO import StringIO
 # 			char_counts.append([char, 1])
 # 	return False
 
-# determines whether or not a string is ascii art, using a "very sophisticated" algorithm
-def is_valid(str, max_height, max_width):
-	lines = str.splitlines()
-	height = len(lines)
-	width = max(len(s) for s in lines)
-	return height >= max_height and width >= max_width
-
 # str is the ASCII art string to be converted
 def str_to_img(str):
 	# use 12pt Courier New for ASCII art

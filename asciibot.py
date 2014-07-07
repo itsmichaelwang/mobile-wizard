@@ -56,8 +56,7 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=250, print_comments=F
 			output.append(comment)
 	return output
 
-# mind the negative
-def is_unnecessary(comment, comment_history_file):
+def is_valid(comment, comment_history_file):
 	"""Determines whether or not the parent submission/comment of a comment requesting ascii-wizard's services should be converted and posted.
 	RULES:
 		Do not convert comments that have already been converted.
@@ -68,54 +67,59 @@ def is_unnecessary(comment, comment_history_file):
 		comment_history_file: The name of a json file containing a dictionary with key=submission ID => value=[array of IDs of converted comments]. To initialize, one can simply make a blank json file, and ascii-wizard will do all the work
 
 	Returns:
-		False if the comment given violates any of the above rules, otherwise False
+		False if the comment given violates any of the above rules, otherwise True
 	"""
+	# dictionary to track and limit the # of conversions in a submission, user to limit posts
+	# submission ID => [array of converted comment IDs]
+	comment_history_json = open(comment_history_file, 'r+')
+	comment_history = json.load(comment_history_json)
 
+	submission_id = comment.submission.id
+	comment_id = comment.id
+	# don't do more than MAX_COMMENTS responses, don't repeat responses
+	MAX_COMMENTS = 5
+	if submission_id in comment_history:
+		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
+			print("ERROR: Limit reached")
+			comment_history_json.close()
+			return False
+		if comment_id in comment_history[submission_id]:
+			print("ERROR: Duplicate comment")
+			comment_history_json.close()
+			return False
+	# if True, you will make a post, so go ahead and update the comment history
+	comment_history[submission_id] = comment_history.get(submission_id, [])
+	comment_history[submission_id].append(comment_id)
+	comment_history_json.seek(0)
+	json.dump(comment_history, comment_history_json)
+	comment_history_json.close()
+	return True
 
-# def post_reply(comment):
-
+# for a given comment, reply to that comment with a picture of the comment's parent
+# def reply_with_image(comment):
 
 # start shit
 r = automatic_reddit_login('credentials.json')
-
-# dictionary to track and limit the # of conversions in a submission, user to limit posts
-# submission => converted comment
-completed_json = open('completed.json', 'r+')
-completed = json.load(completed_json)
 
 while True:
 	# intentional time delay (see below)
 	start = time.time()
 	# fetch relevant comments
 	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='test'):
-		print("Keyworded comment: " + comment.body)
-		# detect if comments have been made
-		submission_id = comment.submission.id
-		comment_id = comment.id
-		MAX_COMMENTS = 5
-		# limit conversions per submission, and don't do repeats either
-		if submission_id in completed:
-			if len(completed.get(submission_id, [])) >= MAX_COMMENTS:
-				continue
-			if comment_id in completed[submission_id]:
-				continue
-		if comment.is_root:
-			parent = comment.submission
-			parent_text = parent.selftext
-		else:
-			parent = r.get_info(thing_id=comment.parent_id)
-			parent_text = parent.body
-		# only convert non-empty strings greater than 5x15
-		if strtoimg.is_valid(parent_text, 5, 15):
+		print(comment.body)
+		if is_valid(comment, 'completed.json'):
+			if comment.is_root:
+				parent = comment.submission
+				parent_text = parent.selftext
+			else:
+				parent = r.get_info(thing_id=comment.parent_id)
+				parent_text = parent.body
+			# only convert non-empty strings greater than 5x15
 			image = strtoimg.str_to_img(parent_text)
 			uploaded_image_url = imgur.upload_image(image, comment.permalink)
 			# make a post
 			comment.reply(uploaded_image_url)
 			# update completed_json
-			completed[submission_id] = completed.get(submission_id, [])
-			completed[submission_id].append(comment_id)
-			completed_json.seek(0)
-			json.dump(completed, completed_json)
 	
 	# Reddit recent comments page is cached every 30 seconds, so wait 30 (+5 for error) seconds until fetching comments again
 	elapsed_time = time.time() - start
