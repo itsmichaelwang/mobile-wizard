@@ -52,50 +52,53 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=250, print_comments=F
 	for comment in comments:
 		if print_comments:
 			print(comment)
-		if keyword in comment.body:
+		if keyword.lower() in comment.body.lower():
 			output.append(comment)
 	return output
 
-def is_valid(comment, comment_history_file):
+def get_parent(comment):
+	if comment.is_root:
+		parent = comment.submission
+		parent_text = parent.selftext
+	else:
+		parent = r.get_info(thing_id=comment.parent_id)
+		parent_text = parent.body
+	output = [parent, parent_text]
+	return output
+
+def is_valid(comment, comment_history):
 	"""Determines whether or not the parent submission/comment of a comment requesting ascii-wizard's services should be converted and posted.
 	RULES:
-		Do not convert comments that have already been converted.
+		Do not convert the parents of comments whose parents have already been converted.
 		Do not convert comments if the submission in which in the comment exists has already been visited 5 times
+		Do not convert empty posts/image posts
 
 	Args:
 		comment: The comment in question
-		comment_history_file: The name of a json file containing a dictionary with key=submission ID => value=[array of IDs of converted comments]. To initialize, one can simply make a blank json file, and ascii-wizard will do all the work
-
+		comment_history: A dictionary with key=submission ID => value=[array of IDs of converted comments]. To make persistance, I used a json file (see below)
 	Returns:
 		False if the comment given violates any of the above rules, otherwise True
 	"""
-	# dictionary to track and limit the # of conversions in a submission, user to limit posts
-	# submission ID => [array of converted comment IDs]
-	comment_history_json = open(comment_history_file, 'r+')
-	comment_history = json.load(comment_history_json)
-
 	submission_id = comment.submission.id
-	comment_id = comment.id
-	# don't do more than MAX_COMMENTS responses, don't repeat responses
+	output = get_parent(comment)
+	parent_id = output[0].id
+	parent_text = output[1]
+	# don't do more than MAX_COMMENTS responses, don't repeat responses, ignore empty comments
 	MAX_COMMENTS = 5
+	if not parent_text:
+		print("ERROR: Empty/invalid input")
+		return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
 			print("ERROR: Limit reached")
-			comment_history_json.close()
 			return False
-		if comment_id in comment_history[submission_id]:
-			print("ERROR: Duplicate comment")
-			comment_history_json.close()
+		if parent_id in comment_history[submission_id]:
+			print("ERROR: Already processed")
 			return False
-	# if True, you will make a post, so go ahead and update the comment history
-	comment_history[submission_id] = comment_history.get(submission_id, [])
-	comment_history[submission_id].append(comment_id)
-	comment_history_json.seek(0)
-	json.dump(comment_history, comment_history_json)
-	comment_history_json.close()
+	# otherwise, return true
 	return True
 
-def reply_with_image(r, comment):
+def reply_with_image(r, comment, comment_history):
 	"""For the given comment, reply to that comment with a picture of the comment's parent. The function does not return anything.
 
 	Args:
@@ -104,17 +107,20 @@ def reply_with_image(r, comment):
 	"""
 	# if 'comment' is a root comment, its parent is the submission itself
 	# if 'comment' is not a root comment, its parent is the comment above it
-	if comment.is_root:
-		parent = comment.submission
-		parent_text = parent.selftext
-	else:
-		parent = r.get_info(thing_id=comment.parent_id)
-		parent_text = parent.body
+	submission_id = comment.submission.id
+	output = get_parent(comment)
+	parent_id = output[0].id
+	parent_text = output[1]
 	# convert/upload the parent post to imgur
 	image = strtoimg.str_to_img(parent_text)
 	uploaded_image_url = imgur.upload_image(image, comment.permalink)
 	# reply to 'comment'
 	comment.reply(uploaded_image_url)
+	# update the comment history to reflect this
+	comment_history[submission_id] = comment_history.get(submission_id, [])
+	comment_history[submission_id].append(parent_id)
+	comment_history_json.seek(0)
+	json.dump(comment_history, comment_history_json)
 
 def delay(start, delay_time):
 	"""From a given point in time, delay execution until a certain amount of time has passed.
@@ -133,10 +139,15 @@ r = automatic_reddit_login('credentials.json')
 while True:
 	# intentional time delay (see below)
 	start = time.time()
+	# dictionary to track and limit the # of conversions in a submission, user to limit posts
+	# submission ID => [array of converted comment IDs]
+	comment_history_json = open('completed.json', 'r+')
+	comment_history = json.load(comment_history_json)
 	# fetch relevant comments
 	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='test'):
 		print(comment.body)
-		if is_valid(comment, 'completed.json'):
-			reply_with_image(r, comment)
+		# check if repeat, or over the limit
+		if is_valid(comment, comment_history):
+			reply_with_image(r, comment, comment_history)
 	# Reddit recent comments page is cached every 30 seconds, so wait 30 (+5 for error) seconds until fetching comments again
 	delay(start, 35)
