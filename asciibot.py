@@ -69,9 +69,10 @@ def get_parent(comment):
 def is_valid(comment, comment_history):
 	"""Determines whether or not the parent submission/comment of a comment requesting ascii-wizard's services should be converted and posted.
 	RULES:
+		Do not convert empty posts/image posts
+		Do not convert posts shorter than 5 lines
 		Do not convert the parents of comments whose parents have already been converted.
 		Do not convert comments if the submission in which in the comment exists has already been visited 5 times
-		Do not convert empty posts/image posts
 
 	Args:
 		comment: The comment in question
@@ -88,9 +89,9 @@ def is_valid(comment, comment_history):
 	if not parent_text:
 		print("ERROR: Empty/invalid input")
 		return False
-	if len(parent_text.splitlines()) < 5:
-		print("ERROR: Input too short")
-		return False
+	# if len(parent_text.splitlines()) < 5:
+	# 	print("ERROR: Input too short")
+	# 	return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
 			print("ERROR: Limit reached")
@@ -118,7 +119,8 @@ def reply_with_image(r, comment, comment_history):
 	image = strtoimg.str_to_img(parent_text)
 	uploaded_image_url = imgur.upload_image(image, comment.permalink)
 	# reply to 'comment'
-	comment.reply(uploaded_image_url)
+	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see."
+	comment.reply(reply_text)
 	# update the comment history to reflect this
 	comment_history[submission_id] = comment_history.get(submission_id, [])
 	comment_history[submission_id].append(parent_id)
