@@ -88,6 +88,9 @@ def is_valid(comment, comment_history):
 	if not parent_text:
 		print("ERROR: Empty/invalid input")
 		return False
+	if len(parent_text.splitlines()) < 5:
+		print("ERROR: Input too short")
+		return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
 			print("ERROR: Limit reached")
