@@ -89,9 +89,9 @@ def is_valid(comment, comment_history):
 	if not parent_text:
 		print("ERROR: Empty/invalid input")
 		return False
-	# if len(parent_text.splitlines()) < 5:
-	# 	print("ERROR: Input too short")
-	# 	return False
+	if len(parent_text.splitlines()) < 3:
+		print("ERROR: Input too short")
+		return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
 			print("ERROR: Limit reached")
@@ -119,7 +119,7 @@ def reply_with_image(r, comment, comment_history):
 	image = strtoimg.str_to_img(parent_text)
 	uploaded_image_url = imgur.upload_image(image, comment.permalink)
 	# reply to 'comment'
-	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see."
+	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/ascii-wizard) ^| ^This ^bot ^posts ^a ^maximum ^of ^5 ^times ^in ^a ^submission, ^as ^an ^anti-spam ^measure."
 	comment.reply(reply_text)
 	# update the comment history to reflect this
 	comment_history[submission_id] = comment_history.get(submission_id, [])
@@ -144,12 +144,13 @@ r = automatic_reddit_login('credentials.json')
 while True:
 	# intentional time delay (see below)
 	start = time.time()
+	print("Fetching...")
 	# dictionary to track and limit the # of conversions in a submission, user to limit posts
 	# submission ID => [array of converted comment IDs]
 	comment_history_json = open('completed.json', 'r+')
 	comment_history = json.load(comment_history_json)
 	# fetch relevant comments
-	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='test'):
+	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='test', print_comments=True):
 		print(comment.body)
 		# check if repeat, or over the limit
 		if is_valid(comment, comment_history):

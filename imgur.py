@@ -8,8 +8,8 @@ def get_access_token():
 						 'client_secret': imgur_client_secret,
 						 'grant_type':'refresh_token'}
 	r = requests.post('https://api.imgur.com/oauth2/token', data=payload)
-	content = json.loads(r.content)
-	access_token = content['access_token']
+	data = json.loads(r.content)['data']
+	access_token = data['access_token']
 	return access_token
 
 def upload_image(img, title):
