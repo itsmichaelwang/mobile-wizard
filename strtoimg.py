@@ -22,7 +22,8 @@ def str_to_img(str):
 	img_height = num_of_lines * line_height				# the image height is the # of lines * line height
 
 	# creating the output image
-	img = Image.new('RGB', (img_width, img_height), 'white')
+	# add 5 pixels to account for lowercase letters that might otherwise get truncated
+	img = Image.new('RGB', (img_width, img_height + 5), 'white')
 	d = ImageDraw.Draw(img)
 
 	for i, line in enumerate(str_by_line):
