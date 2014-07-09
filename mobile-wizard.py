@@ -71,7 +71,7 @@ def is_valid(comment, comment_history):
 	RULES:
 		Do not convert empty posts/image posts
 		Do not convert posts shorter than 3 lines
-		Do not convert the parents of comments whose parents have already been converted.
+		Do not convert the parents of comments whose parents have already been converted
 		Do not convert comments if the submission in which in the comment exists has already been visited 5 times
 
 	Args:
