@@ -18,7 +18,7 @@ def automatic_reddit_login(credentials_file=None):
 		The praw.Reddit class, which allows access to Reddit's API
 	"""
 	# submit user agent
-	user_agent = ("ascii-wizard: Reddit post2image conversion bot for mobile users"
+	user_agent = ("mobile-wizard: Reddit post2image conversion bot for mobile users"
 								"Version 1.0b by /u/Zapurdead")
 	r = praw.Reddit(user_agent=user_agent)
 
@@ -70,7 +70,7 @@ def is_valid(comment, comment_history):
 	"""Determines whether or not the parent submission/comment of a comment requesting ascii-wizard's services should be converted and posted.
 	RULES:
 		Do not convert empty posts/image posts
-		Do not convert posts shorter than 5 lines
+		Do not convert posts shorter than 3 lines
 		Do not convert the parents of comments whose parents have already been converted.
 		Do not convert comments if the submission in which in the comment exists has already been visited 5 times
 
@@ -150,7 +150,7 @@ while True:
 	comment_history_json = open('completed.json', 'r+')
 	comment_history = json.load(comment_history_json)
 	# fetch relevant comments
-	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='test', print_comments=True):
+	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all'):
 		print(comment.body)
 		# check if repeat, or over the limit
 		if is_valid(comment, comment_history):
