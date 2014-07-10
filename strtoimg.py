@@ -1,17 +1,17 @@
 from PIL import Image, ImageDraw, ImageFont
 from cStringIO import StringIO
 
-# str is the ASCII art string to be converted
 def str_to_img(str):
+	"""Converts a given string to a PNG image, and saves it to the return variable"""
 	# use 12pt Courier New for ASCII art
 	font = ImageFont.truetype("cour.ttf", 12)
-
-	str_by_line = str.split("\n")
-	num_of_lines = len(str_by_line)
 
 	# create a placeholder image to determine correct image
 	img = Image.new('RGB', (1,1))
 	d = ImageDraw.Draw(img)
+	
+	str_by_line = str.split("\n")
+	num_of_lines = len(str_by_line)
 	
 	line_widths = []
 	for i, line in enumerate(str_by_line):
@@ -29,6 +29,6 @@ def str_to_img(str):
 	for i, line in enumerate(str_by_line):
 		d.text((0,i*line_height), line, font=font, fill='black')
 	output = StringIO()
-	img.save(output, format='JPEG')
+	img.save(output, format='PNG')
 
 	return output

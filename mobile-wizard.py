@@ -7,8 +7,6 @@ import time
 import strtoimg
 import imgur
 
-automatic_reddit_login(creden)
-
 def automatic_reddit_login(credentials_file=None):
 	"""Logs users into Reddit automatically, if credentials are provided.
 
@@ -34,7 +32,7 @@ def automatic_reddit_login(credentials_file=None):
 		user = r.login()
 	return r
 
-def comments_by_keyword(r, keyword, subreddit='all', limit=250, print_comments=False):
+def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=False):
 	"""Fetches comments from a subreddit containing a given keyword or phrase
 
 	Args:
