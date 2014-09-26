@@ -2,6 +2,7 @@ from __future__ import print_function
 import praw
 import json
 import time
+import configparser
 
 # user-made modules
 import strtoimg
@@ -11,7 +12,7 @@ def automatic_reddit_login(credentials_file=None):
 	"""Logs users into Reddit automatically, if credentials are provided.
 
 	Args:
-		credentials_file: String pointing to a json file with the key/value pairs 'reddit_user_name' and 'reddit_pass_word'. If not provided, the function will prompt the user for credentials when run.
+		credentials_file: String pointing to an ini file with the key/value pairs 'reddit_username' and 'reddit_password'. If not provided, the function will prompt the user for credentials when run.
 
 	Returns:
 		The praw.Reddit class, which allows access to Reddit's API
@@ -23,11 +24,11 @@ def automatic_reddit_login(credentials_file=None):
 
 	# log in
 	if credentials_file != None:
-		with open(credentials_file, 'r') as credentials_json:
-			credentials = json.load(credentials_json)
-			r_username = credentials['reddit_username']
-			r_password = credentials['reddit_password']
-		user = r.login(username=r_username, password=r_password)
+		config = configparser.ConfigParser()
+		config.read('credentials.ini')
+		reddit_username = config['REDDIT']['reddit_username']
+		reddit_password = config['REDDIT']['reddit_password']
+		user = r.login(username=reddit_username, password=reddit_password)
 	else:
 		user = r.login()
 	return r
@@ -40,7 +41,7 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 		keyword: Keep only the comments that contain the keyword or phrase
 		subreddit: A string denoting the subreddit(s) to look through, default is 'all' for r/all
 		limit: The maximum number of posts to fetch, increase for more thoroughness at the cost of increased redundancy/running time
-		print_comments: If True, comments_by_keyword will print every comment it fetches, instead of just returning filtered ones
+		print_comments: (Debug option) If True, comments_by_keyword will print every comment it fetches, instead of just returning filtered ones
 
 	Returns:
 		An array of comment objects whose body text contains the given keyword or phrase
