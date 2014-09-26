@@ -3,7 +3,7 @@
 
 `data.txt` and `data.png` are provided as example inputs and outputs, respectively.
 
-###Installation Instructions
+###Installation
 First, go ahead and clone the `mobile-wizard` repo into whatever directory you prefer. Then, make sure you have [installed pip](http://pip.readthedocs.org/en/latest/installing.html). Then, install the prerequisite packages using the included `requirements.txt` by typing:
 
 `pip install -r requirements.txt`
@@ -29,3 +29,10 @@ Finally, make a file called `completed.json`. This file basically stores all the
 `{}`
 
 These record files are swappable between instances of the bot, so you can transfer them. If you want to move your bot from one location to another, make sure to store `credentials.ini` and `completed.json` with you in a flash drive so you can put them back in when you start again.
+
+###Running
+To run the bot, simply navigate to the repo location, and type
+
+`python mobile=wizard.py`
+
+and the bot will do it's thing!
