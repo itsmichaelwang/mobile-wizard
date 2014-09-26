@@ -9,3 +9,17 @@ First, go ahead and clone the `mobile-wizard` repo into whatever directory you p
 `pip install -r requirements.txt`
 
 Make sure to do this as root if you are on linux, otherwise it may not work. Also, Pillow can sometimes be a pain to install. If you can't get it to install on Windows 7, try the [precompiled packages](http://www.lfd.uci.edu/~gohlke/pythonlibs/). For Linux (more specifically Debian), try the solution described in this [StackExchange post](http://unix.stackexchange.com/questions/105265/install-pil-pillow-via-pip-in-debian-testing-jessie).
+
+Next, make a credentials file called `credentials.ini`. It should have this exact format, except with the fields filled in:
+```
+[REDDIT]
+reddit_username = ******
+reddit_password = ******
+
+[IMGUR]
+imgur_client_id = ******
+imgur_client_secret = ******
+imgur_access_token = ******
+imgur_refresh_token = ******
+```
+Fill it in with the details of the reddit/imgur accounts that you want to do the posting/image hosting. For more information on how to get imgur credentials, refer to the [Imgur API Documentation](https://api.imgur.com/).
