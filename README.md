@@ -33,6 +33,6 @@ These record files are swappable between instances of the bot, so you can transf
 ###Running
 To run the bot, simply navigate to the repo location, and type
 
-`python mobile=wizard.py`
+`python mobile-wizard.py`
 
 and the bot will do it's thing!
