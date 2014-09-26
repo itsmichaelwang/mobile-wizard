@@ -102,9 +102,9 @@ def is_valid(comment, comment_history):
 	if not parent_text:
 		print("ERROR: Empty/invalid input")
 		return False
-	# if len(parent_text.splitlines()) < 3:
-	# 	print("ERROR: Input too short")
-	# 	return False
+	if len(parent_text.splitlines()) < 3:
+		print("ERROR: Input too short")
+		return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
 			print("ERROR: Limit reached")
@@ -164,7 +164,7 @@ while True:
 	comment_history_json = open('completed.json', 'r+')
 	comment_history = json.load(comment_history_json)
 	# fetch relevant comments
-	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='mobilewizard', print_comments=False):
+	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='mobilewizard', print_comments=True):
 		if is_valid(comment, comment_history):
 			reply_with_image(r, comment, comment_history)
 	# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
