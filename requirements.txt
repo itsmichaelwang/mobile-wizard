@@ -1,6 +1,6 @@
 Pillow==2.5.0
 configparser==3.3.0r2
-praw==2.1.17
-requests==2.3.0
-six==1.7.3
+praw==2.1.18
+requests==2.4.1
+six==1.8.0
 update-checker==0.10
