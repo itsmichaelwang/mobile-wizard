@@ -1,5 +1,6 @@
 import requests
 import json
+import configparser
 from base64 import b64encode
 
 def get_access_token():
@@ -13,18 +14,21 @@ def get_access_token():
 	return access_token
 
 def upload_image(img, title):
-	# load oauth credentials from 'credentials.json'
-	credentials_json = open('credentials.json', 'r+')
-	credentials = json.load(credentials_json)
-	global imgur_access_token
-	global imgur_refresh_token
+	# load oauth credentials from 'credentials.ini'
+	config = configparser.ConfigParser()
+	config.read('credentials.ini')
+	imgur_credentials = config['IMGUR']
+
 	global imgur_client_ID
 	global imgur_client_secret
-	imgur_access_token = credentials['imgur_access_token']
-	imgur_refresh_token = credentials['imgur_refresh_token']
-	imgur_client_ID = credentials['imgur_client_ID']
-	imgur_client_secret = credentials['imgur_client_secret']
-
+	global imgur_refresh_token
+	global imgur_access_token
+	
+	imgur_client_ID = imgur_credentials['imgur_client_ID']
+	imgur_client_secret = imgur_credentials['imgur_client_secret']
+	imgur_refresh_token = imgur_credentials['imgur_refresh_token']
+	imgur_access_token = imgur_credentials['imgur_access_token']
+	
 	url = 'https://api.imgur.com/3/image'
 	#encode image for POST request
 	img_data = b64encode(img.getvalue())
@@ -40,21 +44,21 @@ def upload_image(img, title):
 	status_code = 0
 	while (status_code != 200):
 		# upload image and parse response
-		r = requests.post(url, data=payload, headers=header)
-		print(r)
-		status_code = r.status_code
-		# success, return link
+		imgur_response = requests.post(url, data=payload, headers=header)
+		print(imgur_response)											# prints the status code out as a string
+		status_code = imgur_response.status_code 	# update the numeric value of the status code
+		# success, return link to uploaded image
 		if (status_code == 200):
-			credentials_json.close()
-			data = json.loads(r.text)['data']
+			data = json.loads(imgur_response.text)['data']
 			return data['link']
 		# invalid access token - generate a new one and print it (storing to file will come later)
 		if (status_code == 403):
 			imgur_access_token = get_access_token()
 			print "Generating new access token: " + imgur_access_token
-			credentials['imgur_access_token'] = imgur_access_token
-			credentials_json.seek(0)
-			json.dump(credentials, credentials_json)
+			config['IMGUR']['imgur_access_token'] = imgur_access_token
+			with open('credentials.ini', 'r+') as credentials:
+				config.set('IMGUR', 'imgur_access_token', imgur_access_token)
+				config.write(credentials)
 			header = {
 				'Authorization': 'Bearer ' + imgur_access_token
 			}

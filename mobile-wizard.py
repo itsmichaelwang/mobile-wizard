@@ -25,7 +25,7 @@ def automatic_reddit_login(credentials_file=None):
 	# log in
 	if credentials_file != None:
 		config = configparser.ConfigParser()
-		config.read('credentials.ini')
+		config.read(credentials_file)
 		reddit_username = config['REDDIT']['reddit_username']
 		reddit_password = config['REDDIT']['reddit_password']
 		user = r.login(username=reddit_username, password=reddit_password)
@@ -51,7 +51,7 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 	for comment in comments:
 		if print_comments:
 			print(comment)
-			print("**********")
+			
 		# ignore the case of the keyword and comments being fetched
 		# Example: for keyword='RIP mobile users', comments_by_keyword would keep 'rip Mobile Users', 'rip MOBILE USERS', etc.
 		if keyword.lower() in comment.body.lower():
@@ -100,9 +100,9 @@ def is_valid(comment, comment_history):
 	if not parent_text:
 		print("ERROR: Empty/invalid input")
 		return False
-	if len(parent_text.splitlines()) < 3:
-		print("ERROR: Input too short")
-		return False
+	# if len(parent_text.splitlines()) < 3:
+	# 	print("ERROR: Input too short")
+	# 	return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
 			print("ERROR: Limit reached")
@@ -151,7 +151,7 @@ def delay(start, delay_time):
 	print("")
 
 # log in
-r = automatic_reddit_login('credentials.json')
+r = automatic_reddit_login('credentials.ini')
 while True:
 	# mark start time for delay() below
 	start = time.time()
@@ -161,8 +161,8 @@ while True:
 	comment_history_json = open('completed.json', 'r+')
 	comment_history = json.load(comment_history_json)
 	# fetch relevant comments
-	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
-		print(comment.body)
+	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='mobilewizard', print_comments=True):
+		print()
 		if is_valid(comment, comment_history):
 			reply_with_image(r, comment, comment_history)
 	# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
