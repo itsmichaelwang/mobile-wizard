@@ -23,3 +23,7 @@ imgur_access_token = ******
 imgur_refresh_token = ******
 ```
 Fill it in with the details of the reddit/imgur accounts that you want to do the posting/image hosting. For more information on how to get imgur credentials, refer to the [Imgur API Documentation](https://api.imgur.com/).
+
+Finally, make a file called `completed.json`. This file basically stores all the posts your bot has ever _converted_ to prevent duplicates. If this is the first time making the file, simply fill it with an empty json array:
+`{}`
+These record files are swappable between instances of the bot, so you can transfer them. If you want to move your bot from one location to another, make sure to store `credentials.ini` and `completed.json` with you in a flash drive so you can put them back in when you start again.
