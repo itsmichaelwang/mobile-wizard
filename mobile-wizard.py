@@ -49,13 +49,15 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 	output = []
 	comments = r.get_comments(subreddit, limit=limit)
 	for comment in comments:
-		if print_comments:
-			print(comment)
-			
 		# ignore the case of the keyword and comments being fetched
 		# Example: for keyword='RIP mobile users', comments_by_keyword would keep 'rip Mobile Users', 'rip MOBILE USERS', etc.
 		if keyword.lower() in comment.body.lower():
+			print(comment.body)
+			print("==========")
 			output.append(comment)
+		elif print_comments:
+			print(comment.body)
+			print("==========")
 	return output
 
 def get_parent(comment):
@@ -156,13 +158,13 @@ while True:
 	# mark start time for delay() below
 	start = time.time()
 	print("Fetching...")
+	print("==========")
 	# dictionary to track mobile-wizard's posting history
 	# submission ID => [array of converted comment IDs]
 	comment_history_json = open('completed.json', 'r+')
 	comment_history = json.load(comment_history_json)
 	# fetch relevant comments
-	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='mobilewizard', print_comments=True):
-		print()
+	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='mobilewizard', print_comments=False):
 		if is_valid(comment, comment_history):
 			reply_with_image(r, comment, comment_history)
 	# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
