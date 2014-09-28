@@ -13,14 +13,14 @@ Make sure to do this as root if you are on linux, otherwise it may not work. Als
 Next, make a credentials file called `credentials.ini`. It should have this exact format, except with the fields filled in:
 ```
 [REDDIT]
-reddit_username = ******
-reddit_password = ******
+reddit_username =
+reddit_password =
 
 [IMGUR]
-imgur_client_id = ******
-imgur_client_secret = ******
-imgur_access_token = ******
-imgur_refresh_token = ******
+imgur_client_id =
+imgur_client_secret =
+imgur_access_token =
+imgur_refresh_token =
 ```
 Fill it in with the details of the reddit/imgur accounts that you want to do the posting/image hosting. For more information on how to get imgur credentials, refer to the [Imgur API Documentation](https://api.imgur.com/).
 
