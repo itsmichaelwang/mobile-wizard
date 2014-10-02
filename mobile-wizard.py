@@ -4,6 +4,7 @@ from urllib2 import HTTPError
 import praw
 import json
 import time
+import datetime
 import configparser
 
 import sys
@@ -174,6 +175,7 @@ while True:
 			if is_valid(comment, comment_history):
 				reply_with_image(r, comment, comment_history)
 		# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
+		print("Last Successful Query (UTC): " + str(datetime.datetime.utcnow()) + "\n")
 		delay(start, 35)
 	except HTTPError as e:
 		if e.code in [521]:
