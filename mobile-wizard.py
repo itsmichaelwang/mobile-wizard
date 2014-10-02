@@ -57,11 +57,11 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 		# Example: for keyword='RIP mobile users', comments_by_keyword would keep 'rip Mobile Users', 'rip MOBILE USERS', etc.
 		if keyword.lower() in comment.body.lower():
 			print(comment.body.encode('utf-8'))
-			print("==========")
+			print("==========\n")
 			output.append(comment)
 		elif print_comments:
 			print(comment.body.encode('utf-8'))
-			print("==========")
+			print("==========\n")
 	return output
 
 def get_parent(comment):
@@ -164,7 +164,7 @@ while True:
 		# mark start time for delay() below
 		start = time.time()
 		print("Fetching...")
-		print("==========")
+		print("==========\n")
 		# dictionary to track mobile-wizard's posting history
 		# submission ID => [array of converted comment IDs]
 		comment_history_json = open('completed.json', 'r+')
