@@ -1,5 +1,6 @@
 from __future__ import print_function
 from collections import deque
+from urllib2 import HTTPError
 import praw
 import json
 import time
@@ -159,17 +160,25 @@ def delay(start, delay_time):
 r = automatic_reddit_login('credentials.ini')
 
 while True:
-	# mark start time for delay() below
-	start = time.time()
-	print("Fetching...")
-	print("==========")
-	# dictionary to track mobile-wizard's posting history
-	# submission ID => [array of converted comment IDs]
-	comment_history_json = open('completed.json', 'r+')
-	comment_history = json.load(comment_history_json)
-	# fetch relevant comments
-	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
-		if is_valid(comment, comment_history):
-			reply_with_image(r, comment, comment_history)
-	# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
-	delay(start, 35)
+	try:
+		# mark start time for delay() below
+		start = time.time()
+		print("Fetching...")
+		print("==========")
+		# dictionary to track mobile-wizard's posting history
+		# submission ID => [array of converted comment IDs]
+		comment_history_json = open('completed.json', 'r+')
+		comment_history = json.load(comment_history_json)
+		# fetch relevant comments
+		for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
+			if is_valid(comment, comment_history):
+				reply_with_image(r, comment, comment_history)
+		# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
+		delay(start, 35)
+		break
+	except HTTPError as e:
+		if e.code in [429, 500, 502, 503, 504]:
+			print("Error Code " + e.code + " - Sleeping...")
+			time.sleep(60)
+		else:
+			raise
