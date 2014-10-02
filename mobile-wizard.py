@@ -177,7 +177,7 @@ while True:
 		delay(start, 35)
 		break
 	except HTTPError as e:
-		if e.code in [429, 500, 502, 503, 504]:
+		if e.code in [521]:
 			print("Error Code " + e.code + " - Sleeping...")
 			time.sleep(15)
 		else:
