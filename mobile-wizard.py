@@ -1,8 +1,11 @@
 from __future__ import print_function
+from collections import deque
 import praw
 import json
 import time
 import configparser
+
+import sys
 
 # user-made modules
 import strtoimg
@@ -19,7 +22,7 @@ def automatic_reddit_login(credentials_file=None):
 	"""
 	# submit a user agent that describes what your bot does
 	user_agent = ("mobile-wizard: Reddit post2image conversion bot for mobile users"
-								"Version 1.0b by /u/Zapurdead")
+								"Version 2.0 by /u/Zapurdead")
 	r = praw.Reddit(user_agent=user_agent)
 
 	# log in
@@ -52,11 +55,11 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 		# ignore the case of the keyword and comments being fetched
 		# Example: for keyword='RIP mobile users', comments_by_keyword would keep 'rip Mobile Users', 'rip MOBILE USERS', etc.
 		if keyword.lower() in comment.body.lower():
-			print(comment.body)
+			print(comment.body.encode('utf-8'))
 			print("==========")
 			output.append(comment)
 		elif print_comments:
-			print(comment.body)
+			print(comment.body.encode('utf-8'))
 			print("==========")
 	return output
 
@@ -154,6 +157,7 @@ def delay(start, delay_time):
 
 # log in
 r = automatic_reddit_login('credentials.ini')
+
 while True:
 	# mark start time for delay() below
 	start = time.time()
