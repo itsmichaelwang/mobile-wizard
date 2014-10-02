@@ -179,6 +179,6 @@ while True:
 	except HTTPError as e:
 		if e.code in [429, 500, 502, 503, 504]:
 			print("Error Code " + e.code + " - Sleeping...")
-			time.sleep(60)
+			time.sleep(15)
 		else:
 			raise
