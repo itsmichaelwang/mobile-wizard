@@ -175,7 +175,6 @@ while True:
 				reply_with_image(r, comment, comment_history)
 		# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
 		delay(start, 35)
-		break
 	except HTTPError as e:
 		if e.code in [521]:
 			print("Error Code " + e.code + " - Sleeping...")
