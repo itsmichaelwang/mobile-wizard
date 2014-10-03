@@ -178,8 +178,5 @@ while True:
 		print("Last Successful Query (UTC): " + str(datetime.datetime.utcnow()) + "\n")
 		delay(start, 35)
 	except HTTPError as e:
-		if e.code in [521]:
-			print("Error Code " + e.code + " - Sleeping...")
-			time.sleep(15)
-		else:
-			raise
+		print("HTTPError Code " + e.code + ": Sleeping...")
+		time.sleep(30)
