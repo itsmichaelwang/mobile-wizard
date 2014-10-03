@@ -117,7 +117,9 @@ def is_valid(comment, comment_history):
 		if parent_id in comment_history[submission_id]:
 			print("ERROR: Comment already processed")
 			return False
-	if output[0].author.name == "mobile-wizard"
+	if output[0].author.name == "mobile-wizard":
+		print("ERROR: Attempted to convert own post")
+		return False
 	# otherwise, return true
 	return True
 
