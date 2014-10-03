@@ -39,4 +39,5 @@ To run the bot, simply navigate to the repo location, and type:
 The bot has a couple of anti-spam measures, which will probably be largely ineffective to anyone who really wants to abuse the bot:
 * The bot keeps track of which comments it has converted into images, and will not duplicate this.
 * The bot keeps track of how many times it has posted in a thread, and will not post more than 3 times, no matter what.
-* The bot will not convert one-line comments.
+* The bot will not convert comments that are 3 lines in length or shorter.
+* The bot will not convert its own comments.
