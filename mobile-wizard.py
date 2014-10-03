@@ -107,8 +107,8 @@ def is_valid(comment, comment_history):
 	if not parent_text:
 		print("ERROR: Empty/invalid input")
 		return False
-	if len(parent_text.splitlines()) < 1:
-		print("ERROR: Input was a one-line comment")
+	if len(parent_text.splitlines()) <= 3:
+		print("ERROR: Input was too short (three lines or shorter)")
 		return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
@@ -117,6 +117,7 @@ def is_valid(comment, comment_history):
 		if parent_id in comment_history[submission_id]:
 			print("ERROR: Comment already processed")
 			return False
+	if output[0].author.name == "mobile-wizard"
 	# otherwise, return true
 	return True
 
@@ -136,7 +137,7 @@ def reply_with_image(r, comment, comment_history):
 	image = strtoimg.str_to_img(parent_text)
 	uploaded_image_url = imgur.upload_image(image, comment.permalink)
 	# post the reply to Reddit
-	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/ascii-wizard) ^| ^This ^bot ^posts ^a ^maximum ^of ^3 ^times ^in ^a ^submission, ^as ^an ^anti-spam ^measure."
+	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/ascii-wizard) ^| ^This ^bot ^features ^multiple ^anti-spam ^measures."
 	comment.reply(reply_text)
 	# update the comment history to reflect this, and flush it to a json file for future reference
 	comment_history[submission_id] = comment_history.get(submission_id, [])
