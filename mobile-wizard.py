@@ -58,11 +58,11 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 		# Example: for keyword='RIP mobile users', comments_by_keyword would keep 'rip Mobile Users', 'rip MOBILE USERS', etc.
 		if keyword.lower() in comment.body.lower():
 			print(comment.body.encode('utf-8'))
-			print("==========\n")
+			print("=====\n")
 			output.append(comment)
 		elif print_comments:
 			print(comment.body.encode('utf-8'))
-			print("==========\n")
+			print("=====\n")
 	return output
 
 def get_parent(comment):
@@ -142,10 +142,11 @@ def reply_with_image(r, comment, comment_history):
 	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/ascii-wizard) ^| ^This ^bot ^features ^multiple ^anti-spam ^measures."
 	comment.reply(reply_text)
 	# update the comment history to reflect this, and flush it to a json file for future reference
-	comment_history[submission_id] = comment_history.get(submission_id, [])
-	comment_history[submission_id].append(parent_id)
-	comment_history_json.seek(0)
-	json.dump(comment_history, comment_history_json)
+	with open('completed.json', 'r+') as comment_history_file:
+		comment_history[submission_id] = comment_history.get(submission_id, [])
+		comment_history[submission_id].append(parent_id)
+		comment_history_file.seek(0)
+		json.dump(comment_history, comment_history_file)
 
 def delay(start, delay_time):
 	"""From a given point in time (that was marked before delay was called), halt execution until a certain amount of time has passed.
@@ -165,14 +166,14 @@ r = automatic_reddit_login('credentials.ini')
 
 while True:
 	try:
-		# mark start time for delay() below
-		start = time.time()
-		print("Fetching...")
-		print("==========\n")
+		start = time.time()	# to get posts from Reddit at regular intervals, keep track of the start time
+		print("Fetching comments...")
+		print("=====\n")
 		# dictionary to track mobile-wizard's posting history
 		# submission ID => [array of converted comment IDs]
-		comment_history_json = open('completed.json', 'r+')
-		comment_history = json.load(comment_history_json)
+		with open('completed.json', 'r') as comment_history_file:
+			comment_history = json.load(comment_history_file)
+
 		# fetch relevant comments
 		for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
 			if is_valid(comment, comment_history):
