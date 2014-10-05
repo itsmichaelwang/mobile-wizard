@@ -8,6 +8,7 @@ import datetime
 import configparser
 
 import sys
+import os.path
 
 # user-made modules
 import strtoimg
@@ -29,10 +30,7 @@ def automatic_reddit_login(credentials_file=None):
 
 	# log in
 	if credentials_file != None:
-		config = configparser.ConfigParser()
-		config.read(credentials_file)
-		reddit_username = config['REDDIT']['reddit_username']
-		reddit_password = config['REDDIT']['reddit_password']
+		
 		user = r.login(username=reddit_username, password=reddit_password)
 	else:
 		user = r.login()
@@ -139,7 +137,7 @@ def reply_with_image(r, comment, comment_history):
 	image = strtoimg.str_to_img(parent_text)
 	uploaded_image_url = imgur.upload_image(image, comment.permalink)
 	# post the reply to Reddit
-	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/ascii-wizard) ^| ^This ^bot ^features ^multiple ^anti-spam ^measures."
+	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/ascii-wizard) ^| ^This ^bot ^features ^multiple ^[anti-spam](https://github.com/itsmichaelwang/mobile-wizard/blob/master/README.md#anti-spam) ^measures."
 	comment.reply(reply_text)
 	# update the comment history to reflect this, and flush it to a json file for future reference
 	with open('completed.json', 'r+') as comment_history_file:
@@ -162,19 +160,23 @@ def delay(start, delay_time):
 	print("")
 
 # log in
-r = automatic_reddit_login('credentials.ini')
+credentials_file = 'credentials.ini'
+if os.path.isfile(credentials_file):
+	config = configparser.ConfigParser()
+	config.read(credentials_file)
+	reddit_username = config['REDDIT']['reddit_username']
+	reddit_password = config['REDDIT']['reddit_password']
+	r = automatic_reddit_login('credentials.ini')
 
 while True:
 	try:
 		start = time.time()	# to get posts from Reddit at regular intervals, keep track of the start time
 		print("Fetching comments...")
 		print("=====\n")
-		# dictionary to track mobile-wizard's posting history
-		# submission ID => [array of converted comment IDs]
+
 		with open('completed.json', 'r') as comment_history_file:
 			comment_history = json.load(comment_history_file)
 
-		# fetch relevant comments
 		for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
 			if is_valid(comment, comment_history):
 				reply_with_image(r, comment, comment_history)
