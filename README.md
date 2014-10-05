@@ -41,7 +41,6 @@ The bot has a couple of anti-spam measures, which will probably be largely ineff
 * The bot keeps track of how many times it has posted in a thread, and will not post more than 3 times, no matter what.
 * The bot will not convert comments that are 3 lines in length or shorter.
 * The bot will not convert its own comments.
-* 
 
 ###To-Do List
 * Make bot easier to set up on a computer (ideally should just have to clone repository)
