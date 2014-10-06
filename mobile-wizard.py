@@ -50,7 +50,12 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 		An array of comment objects whose body text contains the given keyword or phrase
 	"""
 	output = []
-	comments = r.get_comments(subreddit, limit=limit)
+
+	try:
+		comments = r.get_comments(subreddit, limit=limit)
+	except HTTPError as e:
+		raise
+
 	for comment in comments:
 		# ignore the case of the keyword and comments being fetched
 		# Example: for keyword='RIP mobile users', comments_by_keyword would keep 'rip Mobile Users', 'rip MOBILE USERS', etc.
@@ -169,14 +174,14 @@ if os.path.isfile(credentials_file):
 	r = automatic_reddit_login('credentials.ini')
 
 while True:
+	start = time.time()	# to get posts from Reddit at regular intervals, keep track of the start time
+	print("Fetching comments...")
+	print("=====\n")
+
+	with open('completed.json', 'r') as comment_history_file:
+		comment_history = json.load(comment_history_file)
+
 	try:
-		start = time.time()	# to get posts from Reddit at regular intervals, keep track of the start time
-		print("Fetching comments...")
-		print("=====\n")
-
-		with open('completed.json', 'r') as comment_history_file:
-			comment_history = json.load(comment_history_file)
-
 		for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
 			if is_valid(comment, comment_history):
 				reply_with_image(r, comment, comment_history)
@@ -184,6 +189,6 @@ while True:
 		print("Last Successful Query (UTC): " + str(datetime.datetime.utcnow()) + "\n")
 		delay(start, 35)
 	except HTTPError as e:
-		print("HTTPError Code " + e.code + ": Sleeping...")
-		time.sleep(30)
-		pass
+		msg = "HTTPError " + e.code + ": " + str(datetime.datetime.utcnow())
+		r.send_message('Zapurdead', 'mobile-wizard HTTPError', msg)
+		time.sleep(15)
