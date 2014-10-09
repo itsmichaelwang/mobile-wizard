@@ -1,10 +1,10 @@
 from __future__ import print_function
 from collections import deque
 from urllib2 import HTTPError
+from time import strftime
+from time import sleep
 import praw
 import json
-import time
-import datetime
 import configparser
 
 import sys
@@ -31,7 +31,7 @@ def reddit_login(credentials_file=None):
 		user = r.login()
 	return r
 
-def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=False):
+def comments_by_keyword(r, keyword, subreddit='all', print_comments=False):
 	"""Fetches comments from a subreddit containing a given keyword or phrase
 
 	Args:
@@ -47,7 +47,7 @@ def comments_by_keyword(r, keyword, subreddit='all', limit=1000, print_comments=
 	output = []
 
 	try:
-		comments = r.get_comments(subreddit, limit=limit)
+		comments = r.get_comments(subreddit, limit=750)
 	except urllib2.HTTPError, e:
 		msg = "Reddit error " + e.code + ": Restart required"
 		r.send_message('Zapurdead', 'mobile-wizard', msg)
@@ -147,23 +147,9 @@ def reply_with_image(r, comment, comment_history):
 		comment_history_file.seek(0)
 		json.dump(comment_history, comment_history_file)
 
-def delay(start, delay_time):
-	"""From a given point in time (that was marked before delay was called), halt execution until a certain amount of time has passed.
-
-	Args:
-		start: The point in time to start counting from, in seconds. The easiest way to get this is to create an instance of time.time() somewhere in your code, and pass it in
-		delay_time: The time, in seconds after start, that the function should delay execution until
-	"""
-	elapsed_time = time.time() - start
-	while (elapsed_time < delay_time):
-		print(delay_time - elapsed_time, end='\r')
-		elapsed_time = time.time() - start
-	print("")
-
 r = reddit_login('credentials.ini')
 
 while True:
-	start = time.time()	# to get posts from Reddit at regular intervals, keep track of the start time
 	print("Fetching comments...")
 	print("=====\n")
 
@@ -174,5 +160,5 @@ while True:
 		if is_valid(comment, comment_history):
 			reply_with_image(r, comment, comment_history)
 	# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
-	print("Last Successful Query (UTC): " + str(datetime.datetime.utcnow()) + "\n")
-	delay(start, 35)
+	print("Last Successful Query (CT): " + strftime("%Y-%m-%d %I:%M:%S\n"))
+	sleep(30)
