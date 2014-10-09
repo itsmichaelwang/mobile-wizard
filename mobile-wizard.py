@@ -14,23 +14,18 @@ import os.path
 import strtoimg
 import imgur
 
-def automatic_reddit_login(credentials_file=None):
-	"""Logs users into Reddit automatically, if credentials are provided.
-
-	Args:
-		credentials_file: String pointing to an ini file with the key/value pairs 'reddit_username' and 'reddit_password'. If not provided, the function will prompt the user for credentials when run.
-
-	Returns:
-		The praw.Reddit class, which allows access to Reddit's API
-	"""
-	# submit a user agent that describes what your bot does
-	user_agent = ("mobile-wizard: Reddit post2image conversion bot for mobile users"
-								"Version 2.0 by /u/Zapurdead")
+# login to Reddit using optional credentials file
+def reddit_login(credentials_file=None):
+	user_agent = ("mobile-wizard: post2image conversion bot for mobile users by /u/Zapurdead")
 	r = praw.Reddit(user_agent=user_agent)
 
-	# log in
-	if credentials_file != None:
-		
+	if credentials_file:
+		config = configparser.ConfigParser()
+		config.read(credentials_file)
+		global r_username
+		global r_password
+		r_username = config['REDDIT']['reddit_username']
+		r_password = config['REDDIT']['reddit_password']
 		user = r.login(username=reddit_username, password=reddit_password)
 	else:
 		user = r.login()
@@ -165,14 +160,7 @@ def delay(start, delay_time):
 		elapsed_time = time.time() - start
 	print("")
 
-# log in
-credentials_file = 'credentials.ini'
-if os.path.isfile(credentials_file):
-	config = configparser.ConfigParser()
-	config.read(credentials_file)
-	reddit_username = config['REDDIT']['reddit_username']
-	reddit_password = config['REDDIT']['reddit_password']
-	r = automatic_reddit_login('credentials.ini')
+r = reddit_login('credentials.ini')
 
 while True:
 	start = time.time()	# to get posts from Reddit at regular intervals, keep track of the start time
