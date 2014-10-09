@@ -26,7 +26,7 @@ def reddit_login(credentials_file=None):
 		global r_password
 		r_username = config['REDDIT']['reddit_username']
 		r_password = config['REDDIT']['reddit_password']
-		user = r.login(username=reddit_username, password=reddit_password)
+		user = r.login(username=r_username, password=r_password)
 	else:
 		user = r.login()
 	return r
