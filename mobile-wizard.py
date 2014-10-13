@@ -90,18 +90,13 @@ def is_valid(comment, comment_history):
 		comment_history: A dictionary with key=submission ID => value=[array of IDs of converted comments for that submission].
 
 	Returns:
-		False if the comment given violates any of the above rules, otherwise True
+		False if the comment given violates an anti-spam rule, otherwise True
 	"""
 	submission_id = comment.submission.id
 	output = get_parent(comment)
 	parent_id = output[0].id
 	parent_text = output[1]
 
-	# RULES:
-	# Do not convert empty posts/image posts (which are returned as empty anyways)
-	# Do not convert posts shorter than 3 lines
-	# Do not convert the parents of comments whose parents have already been converted
-	# Do not convert comments if the submission in which in the comment exists has already been visited 5 times
 	MAX_COMMENTS = 3
 	if not parent_text:
 		print("ERROR: Empty/invalid input")
