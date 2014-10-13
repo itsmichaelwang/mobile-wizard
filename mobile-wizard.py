@@ -155,5 +155,5 @@ while True:
 		if is_valid(comment, comment_history):
 			reply_with_image(r, comment, comment_history)
 	# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
-	print("Last Successful Query (CT): " + strftime("%Y-%m-%d %I:%M:%S\n"))
+	print("Last Successful Query (System Time): " + strftime("%Y-%m-%d %I:%M:%S\n"))
 	sleep(30)
