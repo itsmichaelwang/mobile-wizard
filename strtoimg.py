@@ -6,6 +6,9 @@ def str_to_img(str):
 	# use 12pt Courier New for ASCII art
 	font = ImageFont.truetype("cour.ttf", 12)
 
+	# do some string preprocessing
+	str = str.replace("\n\n", "\n");	# Reddit requires double newline for new line, don't let the bot do this
+
 	# create a placeholder image to determine correct image
 	img = Image.new('RGB', (1,1))
 	d = ImageDraw.Draw(img)
