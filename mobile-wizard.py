@@ -45,12 +45,7 @@ def comments_by_keyword(r, keyword, subreddit='all', print_comments=False):
 		An array of comment objects whose body text contains the given keyword or phrase
 	"""
 	output = []
-
-	try:
-		comments = r.get_comments(subreddit, limit=750)
-	except urllib2.HTTPError, e:
-		msg = "Reddit error " + e.code + ": Restart required"
-		r.send_message('Zapurdead', 'mobile-wizard', msg)
+	comments = r.get_comments(subreddit, limit=750)
 
 	for comment in comments:
 		# ignore the case of the keyword and comments being fetched
@@ -145,15 +140,21 @@ def reply_with_image(r, comment, comment_history):
 r = reddit_login('credentials.ini')
 
 while True:
-	print("Fetching comments...")
-	print("=====\n")
+	try:
+		print("Fetching comments...")
+		print("=====\n")
 
-	with open('completed.json', 'r') as comment_history_file:
-		comment_history = json.load(comment_history_file)
+		with open('completed.json', 'r') as comment_history_file:
+			comment_history = json.load(comment_history_file)
 
-	for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
-		if is_valid(comment, comment_history):
-			reply_with_image(r, comment, comment_history)
-	# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
-	print("Last Successful Query (System Time): " + strftime("%Y-%m-%d %I:%M:%S\n"))
+		for comment in comments_by_keyword(r, 'rip mobile users', subreddit='all', print_comments=True):
+			if is_valid(comment, comment_history):
+				reply_with_image(r, comment, comment_history)
+		# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
+		print("Last Successful Query (System Time): " + strftime("%Y-%m-%d %I:%M:%S\n"))
+	except requests.exceptions.HTTPError as e:
+		msg = "Error " + str(e.code) + ": " + str(e)
+		r.send_message('Zapurdead', "[MOBILE-WIZARD]", msg)
+		pass
+		
 	sleep(30)
