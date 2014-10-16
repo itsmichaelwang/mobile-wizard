@@ -1,6 +1,5 @@
 from __future__ import print_function
 from collections import deque
-from urllib2 import HTTPError
 from time import strftime
 from time import sleep
 import praw
@@ -156,5 +155,5 @@ while True:
 		msg = "Error " + str(e.code) + ": " + str(e)
 		r.send_message('Zapurdead', "[MOBILE-WIZARD]", msg)
 		pass
-		
+
 	sleep(30)
