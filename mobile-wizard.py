@@ -1,13 +1,10 @@
 from __future__ import print_function
-from collections import deque
 from time import strftime
 from time import sleep
 import praw
 import json
 import configparser
-
-import sys
-import os.path
+import requests
 
 # user-made modules
 import strtoimg
