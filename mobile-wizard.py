@@ -4,7 +4,7 @@ from time import sleep
 import praw
 import json
 import configparser
-import requests
+from requests.exceptions import HTTPError
 
 # user-made modules
 import strtoimg
@@ -148,7 +148,7 @@ while True:
 				reply_with_image(r, comment, comment_history)
 		# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
 		print("Last Successful Query (System Time): " + strftime("%Y-%m-%d %I:%M:%S\n"))
-	except requests.exceptions.HTTPError as e:
+	except HTTPError as e:
 		msg = "Error " + str(e.code) + ": " + str(e)
 		r.send_message('Zapurdead', "[MOBILE-WIZARD]", msg)
 		pass
