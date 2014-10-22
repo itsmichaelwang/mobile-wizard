@@ -149,8 +149,8 @@ while True:
 		# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
 		print("Last Successful Query (System Time): " + strftime("%Y-%m-%d %I:%M:%S\n"))
 	except HTTPError as e:
-		msg = "Error " + str(e.code) + ": " + str(e)
-		r.send_message('Zapurdead', "[MOBILE-WIZARD]", msg)
+		msg = "HTTPError(" + str(e.errno) + "): " + str(e.strerror)
+		r.send_message('Zapurdead', "[MOBILE-WIZARD] HTTPError", msg)
 		pass
 
 	sleep(30)
