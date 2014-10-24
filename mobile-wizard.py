@@ -4,7 +4,6 @@ from time import sleep
 import praw
 import json
 import configparser
-from requests.exceptions import HTTPError
 
 # user-made modules
 import strtoimg
@@ -147,10 +146,9 @@ while True:
 			if is_valid(comment, comment_history):
 				reply_with_image(r, comment, comment_history)
 		# Reddit caches recent comments every 30 seconds, so fetch comments in intervals of a little over 30 seconds
-		print("Last Successful Query (System Time): " + strftime("%Y-%m-%d %I:%M:%S\n"))
-	except HTTPError as e:
-		msg = "HTTPError(" + str(e.errno) + "): " + str(e.strerror)
-		r.send_message('Zapurdead', "[MOBILE-WIZARD] HTTPError", msg)
+	except praw.requests.exceptions.HTTPError as e:
 		pass
+	finally:
+		print("Last Successful Query (System Time): " + strftime("%Y-%m-%d %I:%M:%S\n"))
 
 	sleep(30)
