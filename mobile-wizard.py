@@ -40,7 +40,7 @@ def comments_by_keyword(r, keyword, subreddit='all', print_comments=False):
 		An array of comment objects whose body text contains the given keyword or phrase
 	"""
 	output = []
-	comments = r.get_comments(subreddit, limit=750)
+	comments = r.get_comments(subreddit, limit=1000)
 
 	for comment in comments:
 		# ignore the case of the keyword and comments being fetched
