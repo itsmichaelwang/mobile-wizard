@@ -1,13 +1,16 @@
 from PIL import Image, ImageDraw, ImageFont
 from types import *
 import sys
-import cStringIO
+from io import StringIO
 
 import strtoimg
 
-def main(arg):
-	assert type(arg) is StringType, "input var is not a string: %r" % arg
-	img = strtoimg.str_to_img(arg, True)
+def main():
+	with open('test.txt', 'r', encoding='utf-8') as file:
+		context = file.readlines()
+		str = "".join(context)
+
+		img = strtoimg.str_to_img(str, True)
 
 if __name__ == "__main__":
-	main(sys.argv[1])
+	main()

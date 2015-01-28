@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
-from cStringIO import StringIO
-import HTMLParser
+from io import BytesIO
+import html
 
 def str_to_img(str, debug=False):
 	"""Converts a given string to a PNG image, and saves it to the return variable"""
@@ -9,10 +9,8 @@ def str_to_img(str, debug=False):
 
 	# do some string preprocessing
 	str = str.replace("\n\n", "\n")	# Reddit requires double newline for new line, don't let the bot do this
-	h = HTMLParser.HTMLParser()
-	str = h.unescape(str).encode('utf-8') # convert HTML entities to plain text
+	str = html.unescape(str)
 
-	# create a placeholder image to determine correct image
 	img = Image.new('RGB', (1,1))
 	d = ImageDraw.Draw(img)
 	
@@ -34,11 +32,11 @@ def str_to_img(str, debug=False):
 
 	for i, line in enumerate(str_by_line):
 		d.text((0,i*line_height), line, font=font, fill='black')
-	output = StringIO()
+	output = BytesIO()
 
 	if (debug):
-		img.save('test.png', format='PNG')
+		img.save('test.png', 'PNG')
 	else:
-		img.save(output, format='PNG')
+		img.save(output, 'PNG')
 
 	return output

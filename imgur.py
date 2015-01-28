@@ -9,7 +9,7 @@ def get_access_token():
 						 'client_secret': imgur_client_secret,
 						 'grant_type':'refresh_token'}
 	r = requests.post('https://api.imgur.com/oauth2/token', data=payload)
-	data = json.loads(r.content)
+	data = json.loads(r.content.decode())
 	access_token = data['access_token']
 	return access_token
 
@@ -54,7 +54,7 @@ def upload_image(img, title):
 		# invalid access token - generate a new one and print it (storing to file will come later)
 		if (status_code == 403):
 			imgur_access_token = get_access_token()
-			print "Generating new access token: " + imgur_access_token
+			print("Generating new access token: " + imgur_access_token)
 			config['IMGUR']['imgur_access_token'] = imgur_access_token
 			with open('credentials.ini', 'r+') as credentials:
 				config.set('IMGUR', 'imgur_access_token', imgur_access_token)
