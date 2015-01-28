@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 from cStringIO import StringIO
 import HTMLParser
 
-def str_to_img(str):
+def str_to_img(str, debug=False):
 	"""Converts a given string to a PNG image, and saves it to the return variable"""
 	# use 12pt Courier New for ASCII art
 	font = ImageFont.truetype("cour.ttf", 12)
@@ -35,6 +35,10 @@ def str_to_img(str):
 	for i, line in enumerate(str_by_line):
 		d.text((0,i*line_height), line, font=font, fill='black')
 	output = StringIO()
-	img.save(output, format='PNG')
+
+	if (debug):
+		img.save('test.png', format='PNG')
+	else:
+		img.save(output, format='PNG')
 
 	return output
