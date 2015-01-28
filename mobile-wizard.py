@@ -123,7 +123,7 @@ def reply_with_image(r, comment, comment_history):
 	image = strtoimg.str_to_img(parent_text)
 	uploaded_image_url = imgur.upload_image(image, comment.permalink)
 	# post the reply to Reddit
-	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/ascii-wizard) ^| ^This ^bot ^features ^multiple ^[anti-spam](https://github.com/itsmichaelwang/mobile-wizard/blob/master/README.md#anti-spam) ^measures."
+	reply_text = ">" + uploaded_image_url + "\n>=" + "\n\n^An ^image ^version ^of ^this ^post ^was ^created ^because ^it ^was ^indicated ^that ^it ^was ^hard ^for ^mobile ^users ^to ^see." + "\n\n^[Github](https://github.com/itsmichaelwang/mobile-wizard) ^| ^[Anti-Spam](https://github.com/itsmichaelwang/mobile-wizard/blob/master/README.md#anti-spam) ^| ^Found ^a ^[bug?](https://github.com/itsmichaelwang/mobile-wizard/issues)"
 	comment.reply(reply_text)
 	# update the comment history to reflect this, and flush it to a json file for future reference
 	with open('completed.json', 'r+') as comment_history_file:
