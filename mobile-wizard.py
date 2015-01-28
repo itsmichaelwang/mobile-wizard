@@ -85,18 +85,18 @@ def is_valid(comment, comment_history):
 	submission_id = comment.submission.id
 	output = get_parent(comment)
 	parent_id = output[0].id
-	parent_text = output[1]
+	parent_text = output[1]	# i'm sorry output is such a horrible variable name
 
 	MAX_COMMENTS = 3
 	if not parent_text:
-		print("ERROR: Empty/invalid input")
+		print("ERROR: Empty/invalid (such as link or image) input")
 		return False
 	if len(parent_text.splitlines()) <= 3:
 		print("ERROR: Input was too short (three lines or shorter)")
 		return False
 	if submission_id in comment_history:
 		if len(comment_history.get(submission_id, [])) >= MAX_COMMENTS:
-			print("ERROR: Submission response cap reached")
+			print("ERROR: Maximum # of conversions for this post reached")
 			return False
 		if parent_id in comment_history[submission_id]:
 			print("ERROR: Comment already processed")
