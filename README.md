@@ -45,7 +45,7 @@ The bot has a couple of anti-spam measures, which will probably be largely ineff
 * The bot's posts are frequently monitored.
 
 ###To-Do List
-* Make bot able to decode HTML entities - IN PROGRESS
+* ~~Make bot able to decode HTML entities~~ - DONE
 * ~~Make bot convert Reddit's double newlines to single newlines.~~ - DONE
 * Make bot easier to set up on a computer (ideally should just have to clone repository)
 * Add feature to delete comments that have less than 0 karma
