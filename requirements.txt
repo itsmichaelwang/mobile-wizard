@@ -1,5 +1,5 @@
 Pillow==2.5.0
-configparser==3.3.0r2
+configparser==3.3.0post2
 praw==2.1.18
 requests==2.4.1
 six==1.8.0
