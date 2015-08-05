@@ -9,14 +9,14 @@ def str_to_img(str, debug=False):
 
 	# do some string preprocessing
 	str = str.replace("\n\n", "\n")	# Reddit requires double newline for new line, don't let the bot do this
-	str = html.unescape(str)
+	str = html.unescape(str).decode('utf-8')
 
 	img = Image.new('RGB', (1,1))
 	d = ImageDraw.Draw(img)
-	
+
 	str_by_line = str.split("\n")
 	num_of_lines = len(str_by_line)
-	
+
 	line_widths = []
 	for i, line in enumerate(str_by_line):
 		line_widths.append(d.textsize(str_by_line[i], font=font)[0])
